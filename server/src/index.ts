@@ -42,8 +42,8 @@ async function main() {
 		}),
 	});
 	apolloServer.applyMiddleware({ app, cors: false });
-	app.listen(5000, () => {
-		console.log('Server listening on port http://localhost:5000/graphql');
+	app.listen(4000, () => {
+		console.log('Server listening on port http://localhost:4000/graphql');
 	});
 }
 
