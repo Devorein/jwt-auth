@@ -4,6 +4,7 @@ import {
 	Ctx,
 	Field,
 	InputType,
+	Int,
 	Mutation,
 	ObjectType,
 	Query,
@@ -52,6 +53,12 @@ export class UserResolver {
 	@UseMiddleware(isAuth)
 	hello() {
 		return 'world';
+	}
+
+	@Mutation(() => Boolean)
+	async incrementTokenVersion(@Arg('userId', () => Int) userId: number) {
+		await getConnection().getRepository(User).increment({ id: userId }, 'tokenVersion', 1);
+		return true;
 	}
 
 	@Mutation(() => UserResponse)

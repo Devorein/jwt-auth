@@ -67,7 +67,12 @@ async function main() {
 					ok: false,
 					accessToken: '',
 				});
-			else {
+			else if (payload.tokenVersion !== user.tokenVersion) {
+				return res.send({
+					ok: false,
+					accessToken: '',
+				});
+			} else {
 				res.cookie('jid', createRefreshToken(user), {
 					httpOnly: true,
 				});
