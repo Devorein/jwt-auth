@@ -1,7 +1,7 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import Routes from './Routes';
 
 const apolloClient = new ApolloClient({
   credentials: 'include',
@@ -12,7 +12,7 @@ const apolloClient = new ApolloClient({
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={apolloClient}>
-      <App />
+      <Routes />
     </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')
