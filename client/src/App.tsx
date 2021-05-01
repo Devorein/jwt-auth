@@ -1,7 +1,11 @@
+import { useHelloQuery } from "./generated/graphql";
+
 function App() {
+  const { data, loading } = useHelloQuery()
+  if (loading) return <div>Loading ...</div>
   return (
     <div className="App">
-      Hello World
+      {JSON.stringify(data, null, 2)}
     </div>
   );
 }
