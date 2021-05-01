@@ -1,4 +1,5 @@
 import argon2 from 'argon2';
+import { sign } from "jsonwebtoken";
 import { Arg, Field, InputType, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import User from '../entities/User';
@@ -17,6 +18,14 @@ export class UserResponse {
 	@Field(() => User, { nullable: true })
 	user?: User;
 }
+
+@ObjectType()
+export class LoginResponse{
+  @Field(() => [FieldError], { nullable: true })
+	errors?: FieldError[];
+	@Field(() => String, { nullable: true })
+	accessToken?: string;
+} 
 
 @InputType()
 export class UserDataInput {
@@ -80,5 +89,46 @@ export class UserResolver {
 				};
 			}
 		}
+	}
+
+	@Mutation(() => LoginResponse)
+	async login(
+		@Arg('usernameOrEmail', () => String) usernameOrEmail: string,
+		@Arg('password', () => String) password: string
+	): Promise<LoginResponse> {
+		const user = await User.findOne({
+			where: usernameOrEmail.includes('@')
+				? {
+						email: usernameOrEmail,
+				  }
+				: {
+						username: usernameOrEmail,
+				  },
+		});
+
+		if (!user)
+			return {
+				errors: [
+					{
+						field: 'usernameOrEmail',
+						message: "Couldn't find an user with that username or email",
+					},
+				],
+			};
+
+		const valid = await argon2.verify(user.password, password);
+		if (!valid)
+			return {
+				errors: [
+					{
+						field: 'password',
+						message: "Password don't match",
+					},
+				],
+			};
+
+		return {
+			accessToken: sign({id: user.id}, 'secret', {expiresIn: '15m'}),
+		};
 	}
 }
