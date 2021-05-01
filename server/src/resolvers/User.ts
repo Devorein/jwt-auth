@@ -1,7 +1,18 @@
 import argon2 from 'argon2';
-import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
+import {
+	Arg,
+	Ctx,
+	Field,
+	InputType,
+	Mutation,
+	ObjectType,
+	Query,
+	Resolver,
+	UseMiddleware,
+} from 'type-graphql';
 import { getConnection } from 'typeorm';
 import User from '../entities/User';
+import { isAuth } from '../middleware/isAuth';
 import { Context } from '../types';
 import { createAccessToken, createRefreshToken } from '../utils/createTokens';
 import { validateRegister } from '../utils/validateRegister';
@@ -38,6 +49,7 @@ export class UserDataInput {
 @Resolver(User)
 export class UserResolver {
 	@Query(() => String)
+	@UseMiddleware(isAuth)
 	hello() {
 		return 'world';
 	}
