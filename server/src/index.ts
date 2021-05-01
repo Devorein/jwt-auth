@@ -1,5 +1,6 @@
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
+import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import 'reflect-metadata';
@@ -7,6 +8,7 @@ import { buildSchema } from 'type-graphql';
 import { createConnection } from 'typeorm';
 import User from './entities/User';
 import { UserResolver } from './resolvers/User';
+import { Context } from './types';
 
 async function main() {
 	const conn = await createConnection({
@@ -36,10 +38,11 @@ async function main() {
 			resolvers: [UserResolver],
 			validate: false,
 		}),
-		context: ({ req, res }) => ({
-			req,
-			res,
-		}),
+		context: ({ req, res }) =>
+			({
+				req,
+				res,
+			} as Context),
 	});
 	apolloServer.applyMiddleware({ app, cors: false });
 	app.listen(4000, () => {

@@ -1,8 +1,9 @@
 import argon2 from 'argon2';
-import { sign } from "jsonwebtoken";
-import { Arg, Field, InputType, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import User from '../entities/User';
+import { Context } from '../types';
+import { createAccessToken, createRefreshToken } from '../utils/createTokens';
 import { validateRegister } from '../utils/validateRegister';
 
 @ObjectType()
@@ -20,12 +21,12 @@ export class UserResponse {
 }
 
 @ObjectType()
-export class LoginResponse{
-  @Field(() => [FieldError], { nullable: true })
+export class LoginResponse {
+	@Field(() => [FieldError], { nullable: true })
 	errors?: FieldError[];
 	@Field(() => String, { nullable: true })
 	accessToken?: string;
-} 
+}
 
 @InputType()
 export class UserDataInput {
@@ -94,7 +95,8 @@ export class UserResolver {
 	@Mutation(() => LoginResponse)
 	async login(
 		@Arg('usernameOrEmail', () => String) usernameOrEmail: string,
-		@Arg('password', () => String) password: string
+		@Arg('password', () => String) password: string,
+		@Ctx() ctx: Context
 	): Promise<LoginResponse> {
 		const user = await User.findOne({
 			where: usernameOrEmail.includes('@')
@@ -127,8 +129,12 @@ export class UserResolver {
 				],
 			};
 
+		ctx.res.cookie('jid', createRefreshToken(user), {
+			httpOnly: true,
+		});
+
 		return {
-			accessToken: sign({id: user.id}, 'secret', {expiresIn: '15m'}),
+			accessToken: createAccessToken(user),
 		};
 	}
 }
