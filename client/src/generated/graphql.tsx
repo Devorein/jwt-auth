@@ -24,6 +24,7 @@ export type LoginResponse = {
   __typename?: 'LoginResponse';
   errors?: Maybe<Array<FieldError>>;
   accessToken?: Maybe<Scalars['String']>;
+  user?: Maybe<User>;
 };
 
 export type Mutation = {
@@ -93,6 +94,10 @@ export type LoginMutation = (
   & { login: (
     { __typename?: 'LoginResponse' }
     & Pick<LoginResponse, 'accessToken'>
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & UserScalarFragment
+    )> }
   ) }
 );
 
@@ -145,9 +150,12 @@ export const LoginDocument = gql`
     mutation Login($password: String!, $usernameOrEmail: String!) {
   login(password: $password, usernameOrEmail: $usernameOrEmail) {
     accessToken
+    user {
+      ...UserScalar
+    }
   }
 }
-    `;
+    ${UserScalarFragmentDoc}`;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**

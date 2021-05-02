@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { useLoginMutation } from "../generated/graphql";
+import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 
 export const Login: React.FC<RouteComponentProps> = ({ history }) => {
   const [loginData, setLoginData] = useState({
@@ -12,9 +12,19 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
   return <form onSubmit={async (e) => {
     e.preventDefault();
     const response = await login({
-      variables: loginData
+      variables: loginData,
+      update: (cache, { data }) => {
+        if (!data)
+          return null;
+
+        return cache.writeQuery<MeQuery>({
+          query: MeDocument,
+          data: {
+            me: data.login.user!
+          }
+        })
+      }
     });
-    console.log(response)
     if (response?.data?.login.accessToken) {
       localStorage.setItem('token', response.data.login.accessToken)
     }
