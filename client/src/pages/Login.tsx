@@ -2,7 +2,7 @@ import { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { useLoginMutation } from "../generated/graphql";
 
-export const Login: React.FC<RouteComponentProps> = ({ history }) => {
+export const Login: React.FC<RouteComponentProps> = ({ }) => {
   const [loginData, setLoginData] = useState({
     password: '',
     usernameOrEmail: ''
@@ -15,7 +15,6 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
       variables: loginData
     });
     console.log(response);
-    history.push("/")
   }}>
     <div>
       <input placeholder="Email OR Password" value={loginData.usernameOrEmail} onChange={e => setLoginData({

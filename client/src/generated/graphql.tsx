@@ -52,6 +52,7 @@ export type MutationLoginArgs = {
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
+  me: User;
   users: Array<User>;
 };
 
@@ -111,12 +112,15 @@ export type RegisterMutation = (
   ) }
 );
 
-export type HelloQueryVariables = Exact<{ [key: string]: never; }>;
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type HelloQuery = (
+export type MeQuery = (
   { __typename?: 'Query' }
-  & Pick<Query, 'hello'>
+  & { me: (
+    { __typename?: 'User' }
+    & UserScalarFragment
+  ) }
 );
 
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
@@ -206,38 +210,40 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
-export const HelloDocument = gql`
-    query Hello {
-  hello
+export const MeDocument = gql`
+    query Me {
+  me {
+    ...UserScalar
+  }
 }
-    `;
+    ${UserScalarFragmentDoc}`;
 
 /**
- * __useHelloQuery__
+ * __useMeQuery__
  *
- * To run a query within a React component, call `useHelloQuery` and pass it any options that fit your needs.
- * When your component renders, `useHelloQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useHelloQuery({
+ * const { data, loading, error } = useMeQuery({
  *   variables: {
  *   },
  * });
  */
-export function useHelloQuery(baseOptions?: Apollo.QueryHookOptions<HelloQuery, HelloQueryVariables>) {
+export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<HelloQuery, HelloQueryVariables>(HelloDocument, options);
+        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
       }
-export function useHelloLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HelloQuery, HelloQueryVariables>) {
+export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<HelloQuery, HelloQueryVariables>(HelloDocument, options);
+          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
         }
-export type HelloQueryHookResult = ReturnType<typeof useHelloQuery>;
-export type HelloLazyQueryHookResult = ReturnType<typeof useHelloLazyQuery>;
-export type HelloQueryResult = Apollo.QueryResult<HelloQuery, HelloQueryVariables>;
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const UsersDocument = gql`
     query Users {
   users {
