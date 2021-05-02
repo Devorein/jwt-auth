@@ -1,16 +1,24 @@
 import { useState } from "react";
-import { UserDataInput } from "../generated/graphql";
+import { RouteComponentProps } from "react-router-dom";
+import { UserDataInput, useRegisterMutation } from "../generated/graphql";
 
-export const Register = () => {
+export const Register: React.FC<RouteComponentProps> = ({ history }) => {
   const [registerData, setRegisterData] = useState<UserDataInput>({
     email: '',
     password: '',
     username: ''
   });
+  const [register] = useRegisterMutation()
 
-  return <form onSubmit={(e) => {
+  return <form onSubmit={async (e) => {
     e.preventDefault();
-    console.log(registerData)
+    const response = await register({
+      variables: {
+        input: registerData
+      }
+    });
+    console.log(response);
+    history.push("/")
   }}>
     <div>
       <input placeholder="Email" value={registerData.email} onChange={e => setRegisterData({

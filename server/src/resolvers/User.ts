@@ -1,15 +1,15 @@
 import argon2 from 'argon2';
 import {
-	Arg,
-	Ctx,
-	Field,
-	InputType,
-	Int,
-	Mutation,
-	ObjectType,
-	Query,
-	Resolver,
-	UseMiddleware,
+  Arg,
+  Ctx,
+  Field,
+  InputType,
+  Int,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+  UseMiddleware
 } from 'type-graphql';
 import { getConnection } from 'typeorm';
 import User from '../entities/User';
@@ -54,6 +54,11 @@ export class UserResolver {
 	hello() {
 		return 'world';
 	}
+
+  @Query(()=> [User])
+  users(): Promise<User[]>{
+    return User.find({})
+  }
 
 	@Mutation(() => Boolean)
 	async incrementTokenVersion(@Arg('userId', () => Int) userId: number) {

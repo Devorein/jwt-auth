@@ -1,0 +1,5 @@
+fragment UserScalar on User{
+  id
+  username
+  email
+}
