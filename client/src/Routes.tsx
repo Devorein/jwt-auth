@@ -13,7 +13,7 @@ function Routes() {
     <Switch>
       <Route path="/" exact render={() => <Home />} />
       <Route path="/register" exact render={(props) => <Register {...props} />} />
-      <Route path="/login" exact render={() => <Login />} />
+      <Route path="/login" exact render={(props) => <Login  {...props} />} />
     </Switch>
   </BrowserRouter>
 }
