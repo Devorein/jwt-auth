@@ -2,7 +2,7 @@ import { useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { useLoginMutation } from "../generated/graphql";
 
-export const Login: React.FC<RouteComponentProps> = ({ }) => {
+export const Login: React.FC<RouteComponentProps> = ({ history }) => {
   const [loginData, setLoginData] = useState({
     password: '',
     usernameOrEmail: ''
@@ -14,7 +14,11 @@ export const Login: React.FC<RouteComponentProps> = ({ }) => {
     const response = await login({
       variables: loginData
     });
-    console.log(response);
+    console.log(response)
+    if (response?.data?.login.accessToken) {
+      localStorage.setItem('token', response.data.login.accessToken)
+    }
+    history.push("/")
   }}>
     <div>
       <input placeholder="Email OR Password" value={loginData.usernameOrEmail} onChange={e => setLoginData({
