@@ -38,6 +38,8 @@ export class LoginResponse {
 	errors?: FieldError[];
 	@Field(() => String, { nullable: true })
 	accessToken?: string;
+	@Field(() => User, { nullable: true })
+	user?: User;
 }
 
 @InputType()
@@ -165,6 +167,7 @@ export class UserResolver {
 
 		return {
 			accessToken: createAccessToken(user),
+			user,
 		};
 	}
 }
