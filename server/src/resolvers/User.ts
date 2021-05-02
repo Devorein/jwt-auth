@@ -74,6 +74,14 @@ export class UserResolver {
 		return true;
 	}
 
+	@Mutation(() => Boolean)
+	logout(@Ctx() { res }: Context) {
+		res.cookie('jid', '', {
+			httpOnly: true,
+		});
+		return true;
+	}
+
 	@Mutation(() => UserResponse)
 	async register(
 		@Arg('input', () => UserDataInput)
@@ -163,6 +171,7 @@ export class UserResolver {
 
 		ctx.res.cookie('jid', createRefreshToken(user), {
 			httpOnly: true,
+			path: '/refresh_token',
 		});
 
 		return {
